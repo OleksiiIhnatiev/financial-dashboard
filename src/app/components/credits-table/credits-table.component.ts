@@ -43,6 +43,7 @@ export class CreditsTableComponent implements OnInit {
   applyFilters(): void {
     let filtered = this.credits();
 
+    // Фільтр по даті видачі
     if (this.filters.issuance_date.start) {
       const startDate = new Date(this.filters.issuance_date.start);
       filtered = filtered.filter(
@@ -58,6 +59,27 @@ export class CreditsTableComponent implements OnInit {
         (credit) =>
           new Date(credit.issuance_date).setHours(0, 0, 0, 0) <=
           endDate.setHours(0, 0, 0, 0)
+      );
+    }
+
+    // 🆕 Фільтр по даті повернення
+    if (this.filters.actual_return_date.start) {
+      const startDate = new Date(this.filters.actual_return_date.start);
+      filtered = filtered.filter(
+        (credit) =>
+          credit.actual_return_date &&
+          new Date(credit.actual_return_date).setHours(0, 0, 0, 0) >=
+            startDate.setHours(0, 0, 0, 0)
+      );
+    }
+
+    if (this.filters.actual_return_date.end) {
+      const endDate = new Date(this.filters.actual_return_date.end);
+      filtered = filtered.filter(
+        (credit) =>
+          credit.actual_return_date &&
+          new Date(credit.actual_return_date).setHours(0, 0, 0, 0) <=
+            endDate.setHours(0, 0, 0, 0)
       );
     }
 
