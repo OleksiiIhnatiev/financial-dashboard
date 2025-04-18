@@ -1,0 +1,83 @@
+<div class="container">
+  <h2 class="mb-4 mt-3 text-center">Коротка інформація</h2>
+
+  <div class="mb-4">
+    <div class="d-flex flex-column flex-md-row">
+      <button
+        type="button"
+        class="btn btn-outline-primary mb-2 mb-md-0 me-md-2"
+        (click)="filterStats('credits')"
+      >
+        Топ-10 по кількості кредитів
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary mb-2 mb-md-0 me-md-2"
+        (click)="filterStats('percent')"
+      >
+        Топ-10 по сумі сплачених відсотків
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary mb-2 mb-md-0 me-md-2"
+        (click)="filterStats('ratio')"
+      >
+        Топ-10 по співвідношенню відсотків до суми кредиту
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary mb-2 mb-md-0"
+        (click)="resetFilter()"
+      >
+        Основні метрики
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="showMainContent" class="row g-4">
+    <div
+      *ngFor="let month of objectKeys(monthlyStats())"
+      class="col-lg-6 col-md-6"
+    >
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ month }}</h5>
+          <ul class="list-unstyled">
+            <li>
+              <strong>Загальна кількість виданих кредитів:</strong>
+              {{ monthlyStats()[month].totalCredits }}
+            </li>
+            <li>
+              <strong>Середня сума видачі кредитів:</strong>
+              {{ monthlyStats()[month].averageAmount | number : "1.2-2" }} грн
+            </li>
+            <li>
+              <strong>Загальна сума виданих кредитів:</strong>
+              {{ monthlyStats()[month].totalAmount | number : "1.0-0" }} грн
+            </li>
+            <li>
+              <strong>Загальна сума нарахованих відсотків:</strong>
+              {{ monthlyStats()[month].totalPercent | number : "1.0-0" }} грн
+            </li>
+            <li>
+              <strong>Загальна кількість повернених кредитів:</strong>
+              {{ monthlyStats()[month].totalReturned }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!showMainContent">
+    <h5 class="mt-4">Топ-10 {{ currentFilter }}</h5>
+    <ul class="list-group">
+      <li
+        *ngFor="let user of filteredTopUsers; let i = index"
+        class="list-group-item"
+      >
+        {{ i + 1 }}. {{ user }}
+      </li>
+    </ul>
+  </div>
+</div>

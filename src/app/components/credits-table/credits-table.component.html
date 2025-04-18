@@ -1,0 +1,122 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="mb-4">Загальна таблиця кредитів</h2>
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5>Фільтри</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="issuanceDateStart">Дата видачі (від):</label>
+              <input
+                id="issuanceDateStart"
+                type="date"
+                class="form-control"
+                [(ngModel)]="filters.issuance_date.start"
+                (ngModelChange)="applyFilters()"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="issuanceDateEnd">Дата видачі (до):</label>
+              <input
+                id="issuanceDateEnd"
+                type="date"
+                class="form-control"
+                [(ngModel)]="filters.issuance_date.end"
+                (ngModelChange)="applyFilters()"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="returnDateStart">Дата повернення (від):</label>
+              <input
+                id="returnDateStart"
+                type="date"
+                class="form-control"
+                [(ngModel)]="filters.actual_return_date.start"
+                (ngModelChange)="applyFilters()"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="returnDateEnd">Дата повернення (до):</label>
+              <input
+                id="returnDateEnd"
+                type="date"
+                class="form-control"
+                [(ngModel)]="filters.actual_return_date.end"
+                (ngModelChange)="applyFilters()"
+              />
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="overdue"
+              [(ngModel)]="filters.overdue"
+              (ngModelChange)="applyFilters()"
+            />
+            <label class="form-check-label" for="overdue"
+              >Тільки прострочені кредити</label
+            >
+          </div>
+
+          <div>
+            <button class="btn btn-secondary" (click)="resetFilters()">
+              Скинути фільтри
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive mb-4">
+        <table class="table table-bordered table-striped">
+          <thead class="table-light">
+            <tr>
+              <th>Користувач</th>
+              <th>Дата видачі</th>
+              <th>Дата повернення</th>
+              <th>Сума</th>
+              <th>Проценти</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let credit of pagedCredits()">
+              <td>{{ credit.user }}</td>
+              <td>{{ credit.issuance_date }}</td>
+              <td>{{ credit.actual_return_date || "Не повернуто" }}</td>
+              <td>{{ credit.body | currency }}</td>
+              <td>{{ credit.percent | currency }}</td>
+              <td>{{ credit.status }}</td>
+            </tr>
+            <tr *ngIf="pagedCredits().length === 0">
+              <td colspan="6">Немає кредитів за вибраними фільтрами.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <button
+          class="btn btn-primary"
+          (click)="changePage(currentPage() - 1)"
+          [disabled]="currentPage() === 1"
+        >
+          ← Назад
+        </button>
+        <span>Сторінка {{ currentPage() }} з {{ totalPages() }}</span>
+        <button
+          class="btn btn-primary"
+          (click)="changePage(currentPage() + 1)"
+          [disabled]="currentPage() === totalPages()"
+        >
+          Вперед →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
