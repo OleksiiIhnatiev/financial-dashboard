@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { CreditsService } from '../../services/credits/credits.service';
@@ -6,11 +6,12 @@ import { Credit } from '../../models/credit/credit.model';
 
 @Component({
   selector: 'app-credits-table',
+  standalone: true,
   templateUrl: './credits-table.component.html',
   styleUrls: ['./credits-table.component.scss'],
   imports: [FormsModule, CurrencyPipe, CommonModule],
 })
-export class CreditsTableComponent {
+export class CreditsTableComponent implements OnInit {
   credits = signal<Credit[]>([]);
   allFilteredCredits = signal<Credit[]>([]);
   pagedCredits = signal<Credit[]>([]);
@@ -18,8 +19,11 @@ export class CreditsTableComponent {
   totalPages = signal<number>(1);
 
   filters = {
-    issuance_date: { start: '', end: '' },
-    actual_return_date: { start: '', end: '' },
+    issuance_date: { start: null as Date | null, end: null as Date | null },
+    actual_return_date: {
+      start: null as Date | null,
+      end: null as Date | null,
+    },
     overdue: false,
   };
 
@@ -40,17 +44,20 @@ export class CreditsTableComponent {
     let filtered = this.credits();
 
     if (this.filters.issuance_date.start) {
+      const startDate = new Date(this.filters.issuance_date.start);
       filtered = filtered.filter(
         (credit) =>
-          new Date(credit.issuance_date) >=
-          new Date(this.filters.issuance_date.start)
+          new Date(credit.issuance_date).setHours(0, 0, 0, 0) >=
+          startDate.setHours(0, 0, 0, 0)
       );
     }
+
     if (this.filters.issuance_date.end) {
+      const endDate = new Date(this.filters.issuance_date.end);
       filtered = filtered.filter(
         (credit) =>
-          new Date(credit.issuance_date) <=
-          new Date(this.filters.issuance_date.end)
+          new Date(credit.issuance_date).setHours(0, 0, 0, 0) <=
+          endDate.setHours(0, 0, 0, 0)
       );
     }
 
@@ -94,8 +101,8 @@ export class CreditsTableComponent {
 
   resetFilters(): void {
     this.filters = {
-      issuance_date: { start: '', end: '' },
-      actual_return_date: { start: '', end: '' },
+      issuance_date: { start: null, end: null },
+      actual_return_date: { start: null, end: null },
       overdue: false,
     };
     this.applyFilters();

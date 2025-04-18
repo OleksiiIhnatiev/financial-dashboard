@@ -29,7 +29,7 @@
         class="btn btn-outline-primary mb-2 mb-md-0"
         (click)="resetFilter()"
       >
-        Основні метрики
+        Кількість кредитів по місяцях
       </button>
     </div>
   </div>
@@ -73,7 +73,7 @@
     <h5 class="mt-4">Топ-10 {{ currentFilter }}</h5>
     <ul class="list-group">
       <li
-        *ngFor="let user of filteredTopUsers; let i = index"
+        *ngFor="let user of filteredTopUsers(); let i = index"
         class="list-group-item"
       >
         {{ i + 1 }}. {{ user }}

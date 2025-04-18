@@ -3,20 +3,26 @@ import { CommonModule } from '@angular/common';
 import { signal } from '@angular/core';
 import { CreditsService } from '../../services/credits/credits.service';
 import { Credit } from '../../models/credit/credit.model';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-short-information',
+  standalone: true,
   templateUrl: './short-information.component.html',
   styleUrls: ['./short-information.component.scss'],
   imports: [CommonModule],
 })
 export class ShortInformationComponent implements OnInit {
-  credits: Credit[] = [];
+  private creditsSubject = new BehaviorSubject<Credit[]>([]);
+  credits$ = this.creditsSubject.asObservable();
+
+  statsSignal = signal<{ [key: string]: any }>({});
   monthlyStats = signal<{ [key: string]: any }>({});
+  filteredTopUsers = signal<string[]>([]);
   topUsersByCredits: string[] = [];
   topUsersByPercent: string[] = [];
   topUsersByRatio: string[] = [];
-  filteredTopUsers: string[] = [];
   showMainContent = true;
   currentFilter: string = 'користувачів';
 
@@ -24,25 +30,29 @@ export class ShortInformationComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+    this.credits$
+      .pipe(map((credits) => this.calculateStats(credits)))
+      .subscribe(
+        ({ stats, topUsersByCredits, topUsersByPercent, topUsersByRatio }) => {
+          this.monthlyStats.set(stats);
+          this.topUsersByCredits = topUsersByCredits;
+          this.topUsersByPercent = topUsersByPercent;
+          this.topUsersByRatio = topUsersByRatio;
+          this.filteredTopUsers.set(topUsersByCredits);
+        }
+      );
   }
 
   loadData(): void {
     this.creditsService.getCredits().subscribe((data) => {
-      this.credits = data;
-      this.calculateStats();
+      this.creditsSubject.next(data);
     });
   }
 
-  calculateStats(): void {
+  calculateStats(credits: Credit[]): any {
     const { stats, topUsersByCredits, topUsersByPercent, topUsersByRatio } =
-      this.creditsService.calculateStats(this.credits);
-
-    this.monthlyStats.set(stats);
-    this.topUsersByCredits = topUsersByCredits;
-    this.topUsersByPercent = topUsersByPercent;
-    this.topUsersByRatio = topUsersByRatio;
-
-    this.filteredTopUsers = this.topUsersByCredits;
+      this.creditsService.calculateStats(credits);
+    return { stats, topUsersByCredits, topUsersByPercent, topUsersByRatio };
   }
 
   filterStats(type: string): void {
@@ -51,19 +61,19 @@ export class ShortInformationComponent implements OnInit {
     switch (type) {
       case 'credits':
         this.currentFilter = 'по кількості кредитів';
-        this.filteredTopUsers = this.topUsersByCredits;
+        this.filteredTopUsers.set(this.topUsersByCredits);
         break;
       case 'percent':
         this.currentFilter = 'по сумі сплачених відсотків';
-        this.filteredTopUsers = this.topUsersByPercent;
+        this.filteredTopUsers.set(this.topUsersByPercent);
         break;
       case 'ratio':
         this.currentFilter = 'по співвідношенню відсотків до суми кредиту';
-        this.filteredTopUsers = this.topUsersByRatio;
+        this.filteredTopUsers.set(this.topUsersByRatio);
         break;
       default:
         this.currentFilter = 'користувачів';
-        this.filteredTopUsers = this.topUsersByCredits;
+        this.filteredTopUsers.set(this.topUsersByCredits);
         break;
     }
   }
@@ -71,7 +81,7 @@ export class ShortInformationComponent implements OnInit {
   resetFilter(): void {
     this.showMainContent = true;
     this.currentFilter = 'користувачів';
-    this.filteredTopUsers = this.topUsersByCredits;
+    this.filteredTopUsers.set(this.topUsersByCredits);
   }
 
   objectKeys(obj: any): string[] {
