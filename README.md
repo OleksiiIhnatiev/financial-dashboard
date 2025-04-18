@@ -1,59 +1,82 @@
-# FinancialDashboard
+# Фінансовий дашборд на Angular
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.1.
+Цей проект є фінансовим дашбордом, створеним на **Angular 19** з використанням **Bootstrap** та **RxJS/Signals**. Дашборд має дві основні сторінки: "Загальна таблиця" та "Коротка інформація", з можливістю фільтрації даних, пагінації та обчислення метрик.
 
-## Development server
+## Технічні вимоги
 
-To start a local development server, run:
+1. **Angular 17+** та **Bootstrap**.
+2. Використання **Signals** для зберігання даних.
+3. Використання **RxJS** для маніпуляцій з даними.
+4. **Lazy loading** та **Angular Router** для навігації між сторінками.
+5. Адаптивна верстка з використанням **Bootstrap**.
+6. Код написаний з урахуванням загальноприйнятих практик розробки.
+7. Проект має бути залитий на **GitHub** з README файлом.
 
-```bash
-ng serve
-```
+## Встановлення та запуск
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+1. Клонуйте репозиторій:
+   ```bash
+   git clone https://github.com/OleksiiIhnatiev/financial-dashboard.git
+   ```
+2. Перейдіть в директорію проекту:
+   ```bash
+   cd financial-dashboard
+   ```
+3. Встановіть залежності:
+   ```bash
+   npm install
+   ```
+4. Запустіть сервер:
+   ```bash
+   ng serve
+   ```
+   або
+   ```bash
+   npm start
+   ```
+5. Відкрийте браузер і перейдіть за адресою [http://localhost:4200](http://localhost:4200).
 
-## Code scaffolding
+## Структура проекту
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Сторінки
 
-```bash
-ng generate component component-name
-```
+1. **Загальна таблиця**:
+   - Таблиця для відображення даних, що завантажуються з API.
+   - Фільтри для:
+     - періоду дат видачі кредиту,
+     - періоду фактичного повернення кредиту,
+     - відображення прострочених кредитів.
+   - Пагінація для відображення 10 кредитів на сторінку.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+2. **Коротка інформація**:
+   - Панель з метриками:
+     - Загальна кількість виданих кредитів по місяцях.
+     - Середня сума видачі кредитів по місяцях.
+     - Загальна сума виданих кредитів по місяцях.
+     - Загальна сума нарахованих відсотків по місяцях.
+     - Загальна кількість повернених кредитів по місяцях.
 
-```bash
-ng generate --help
-```
+### API
 
-## Building
+Дані для відображення отримуються з наступної кінцевої точки API:
+- [https://raw.githubusercontent.com/LightOfTheSun/front-end-coding-task-db/master/db.json](https://raw.githubusercontent.com/LightOfTheSun/front-end-coding-task-db/master/db.json)
 
-To build the project run:
+### Метрики
 
-```bash
-ng build
-```
+- Для метрики "Кількість повернених кредитів за місяць" — використовується поле `*actual_return_date*` для фільтрації повернених кредитів за датою.
+- Для метрики "Середня сума видачі кредитів" — обчислюється середнє значення поля `*body*` за місяць.
+- Для метрики "Загальна сума нарахованих відсотків" — обчислюється сума поля `*percent*` за місяць.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Додаткові завдання
 
-## Running unit tests
+1. Додано пагінацію в загальну таблицю.
+2. Реалізовані додаткові метрики для сторінки "Коротка інформація":
+   - Топ-10 користувачів за кількістю отриманих кредитів.
+   - Топ-10 користувачів за сумою сплачених відсотків.
+   - Топ-10 користувачів з найбільшим співвідношенням суми сплачених відсотків до суми виданих кредитів.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Юніт-тести
 
+Для компонентів та сервісів написані юніт-тести з використанням **Jasmine** та **Karma**. Тести можна запустити командою:
 ```bash
 ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
